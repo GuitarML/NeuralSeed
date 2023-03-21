@@ -1,8 +1,8 @@
 # Project Name
-TARGET = your_pedal
+TARGET = neuralseed
 
 # Sources
-CPP_SOURCES = your_pedal.cpp
+CPP_SOURCES = neuralseed.cpp
 
 # Library Locations
 LIBDAISY_DIR = ../libDaisy

@@ -1,5 +1,4 @@
-# Your Pedal
-
+# NeuralSeed
 ## Author
 
 Your name goes here.
