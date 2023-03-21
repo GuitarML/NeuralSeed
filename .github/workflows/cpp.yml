@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    env:
+      PEDAL_NAME: your_pedal
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+        
+    - name: Install arm-none-eabi-gcc toolchain
+      uses: fiam/arm-none-eabi-gcc@v1
+      with:
+        release: '9-2019-q4'
+    
+    - name: Build Daisy libraries
+      run: |
+        make -C libDaisy
+        make -C DaisySP
+        
+    - name: Build binary for pedal
+      run: |
+        make -C $PEDAL_NAME
+        
+    - name: Upload binary for terrarium
+      uses: actions/upload-artifact@v2.2.1
+      with:
+        name: Binary for terrarium
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ${{ env.PEDAL_NAME }}/build/${{ env.PEDAL_NAME }}.bin
