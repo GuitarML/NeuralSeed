@@ -19,6 +19,7 @@ RTNeural::ModelT<float, 1, 1,
     RTNeural::DenseT<float, 4, 1>> model;
 
 
+
 // This runs at a fixed rate, to prepare audio samples
 static void AudioCallback(AudioHandle::InputBuffer  in,
                           AudioHandle::OutputBuffer out,
@@ -37,9 +38,13 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
         led1.Set(bypass ? 0.0f : 1.0f);
     }
 
-    for(size_t i = 0; i < size; i += 2)
+    for(size_t i = 0; i < size; i++)
     {
-        float dryl, dryr;
+        int chn = 0;
+        //for(int chn = 0; chn < 2; chn++)
+        //{
+        float input = in[chn][i];
+        float wet   = input;
         //dryl  = in[i];
         //dryr  = in[i + 1];
 
@@ -47,14 +52,28 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
 
         if(bypass)
         {
+            out[chn][i] = wet;
             //out[i]     = in[i];     // left
             //out[i + 1] = in[i + 1]; // right
         }
         else
         {
+
+            float input_arr[] = { input };
+            wet = model.forward (input_arr);
             //out[i]     = in[i]; // Replace in[i] with your left processed signal
             //out[i + 1] = in[i + 1]; // Replace in[i + 1] with your right processed signal
+
+            out[chn][i] = wet;
         }
+        //}
+
+        // Copy left channel to right channel
+        for(size_t i = 0; i < size; i++)
+        {
+            out[1][i] = out[0][i];
+        }
+        
     }
 }
 
@@ -72,6 +91,8 @@ int main(void)
     // Set samplerate for your processing like so:
     // verb.Init(samplerate);
 
+    // Initialize Neural Net
+    model.reset();
 
     // Init the LEDs and set activate bypass
     led1.Init(hw.seed.GetPin(Terrarium::LED_1),false);
