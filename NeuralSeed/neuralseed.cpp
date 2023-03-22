@@ -14,6 +14,11 @@ bool      bypass;
 
 Led led1, led2;
 
+RTNeural::ModelT<float, 1, 1,
+    RTNeural::LSTMLayerT<float, 1, 4>,
+    RTNeural::DenseT<float, 4, 1>> model;
+
+
 // This runs at a fixed rate, to prepare audio samples
 static void AudioCallback(AudioHandle::InputBuffer  in,
                           AudioHandle::OutputBuffer out,

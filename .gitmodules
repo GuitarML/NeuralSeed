@@ -7,3 +7,6 @@
 [submodule "Terrarium"]
 	path = Terrarium
 	url = https://github.com/PedalPCB/Terrarium
+[submodule "RTNeural"]
+	path = RTNeural
+	url = https://github.com/jatinchowdhury18/RTNeural.git
