@@ -1,6 +1,8 @@
 # Project Name
 TARGET = neuralseed
 
+APP_TYPE = BOOT_SRAM
+
 # Sources
 CPP_SOURCES = neuralseed.cpp
 

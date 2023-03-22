@@ -1,6 +1,7 @@
 #include "daisy_petal.h"
 #include "daisysp.h"
 #include "terrarium.h"
+#include "../RTNeural/RTNeural/RTNeural.h"
 
 using namespace daisy;
 using namespace daisysp;
@@ -14,9 +15,13 @@ bool      bypass;
 Led led1, led2;
 
 // This runs at a fixed rate, to prepare audio samples
-void callback(float *in, float *out, size_t size)
+static void AudioCallback(AudioHandle::InputBuffer  in,
+                          AudioHandle::OutputBuffer out,
+                          size_t                    size)
 {
-    hw.ProcessAllControls();
+    //hw.ProcessAllControls();
+    hw.ProcessAnalogControls();
+    hw.ProcessDigitalControls();
     led1.Update();
     led2.Update();
 
@@ -30,20 +35,20 @@ void callback(float *in, float *out, size_t size)
     for(size_t i = 0; i < size; i += 2)
     {
         float dryl, dryr;
-        dryl  = in[i];
-        dryr  = in[i + 1];
+        //dryl  = in[i];
+        //dryr  = in[i + 1];
 
         // Process your signal here
 
         if(bypass)
         {
-            out[i]     = in[i];     // left
-            out[i + 1] = in[i + 1]; // right
+            //out[i]     = in[i];     // left
+            //out[i + 1] = in[i + 1]; // right
         }
         else
         {
-            out[i]     = in[i]; // Replace in[i] with your left processed signal
-            out[i + 1] = in[i + 1]; // Replace in[i + 1] with your right processed signal
+            //out[i]     = in[i]; // Replace in[i] with your left processed signal
+            //out[i + 1] = in[i + 1]; // Replace in[i + 1] with your right processed signal
         }
     }
 }
@@ -54,6 +59,7 @@ int main(void)
 
     hw.Init();
     samplerate = hw.AudioSampleRate();
+    //hw.SetAudioBlockSize(4);
 
     // Initialize your knobs here like so:
     // parameter.Init(hw.knob[Terrarium::KNOB_1], 0.6f, 0.999f, Parameter::LOGARITHMIC);
@@ -68,7 +74,7 @@ int main(void)
     bypass = true;
 
     hw.StartAdc();
-    hw.StartAudio(callback);
+    hw.StartAudio(AudioCallback);
     while(1)
     {
         // Do Stuff Infinitely Here
