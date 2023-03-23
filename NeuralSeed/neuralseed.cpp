@@ -40,35 +40,25 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
 
     for(size_t i = 0; i < size; i++)
     {
-        int chn = 0;
         //for(int chn = 0; chn < 2; chn++)
         //{
-        float input = in[chn][i];
+        float input = in[0][i];
         float wet   = input;
         //dryl  = in[i];
         //dryr  = in[i + 1];
 
         // Process your signal here
-
         if(bypass)
         {
-            out[chn][i] = wet;
-            //out[i]     = in[i];     // left
-            //out[i + 1] = in[i + 1]; // right
+            out[0][i] = in[0][i];
         }
         else
         {
-
             float input_arr[] = { input };
-            wet = model.forward (input_arr);
-            //out[i]     = in[i]; // Replace in[i] with your left processed signal
-            //out[i + 1] = in[i + 1]; // Replace in[i + 1] with your right processed signal
-
-            out[chn][i] = wet;
+            out[0][i] = model.forward (input_arr) + in[0][i];  // Run Model and add Skip Connection
         }
-        //}
 
-        // Copy left channel to right channel
+        // Copy left channel to right channel (see how well mono processing works then try stereo)
         for(size_t i = 0; i < size; i++)
         {
             out[1][i] = out[0][i];
