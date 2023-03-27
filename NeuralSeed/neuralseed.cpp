@@ -1,7 +1,7 @@
 #include "daisy_petal.h"
 #include "daisysp.h"
 #include "terrarium.h"
-#include "../RTNeural/RTNeural/RTNeural.h"
+#include <RTNeural/RTNeural.h>
 
 using namespace daisy;
 using namespace daisysp;
