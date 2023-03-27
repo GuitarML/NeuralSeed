@@ -8,11 +8,6 @@
 #
 # Generates a .h file with the same name as the json model.
 #
-# WIP Version
-# TODO: Finalize formatting to integrate with modified RTNeural.  
-#       Need to permute weights to Tensorflow/Keras for RTNeural?
-#       Pytorch uses (out_channels, in_channels, kernel_size), 
-#       TensorFlow/Keras uses (kernel_size, in_channels, out_channels)
 ####################################################################################
 
 import json
@@ -31,7 +26,11 @@ def add_layer(layer_name, layer_data, header_data):
   """
 
   line = ""
-  var_declaration = "float const " + layer_name.replace(".", "_") + "[] = "
+  # Use appropriate declaration for 1D or 2D vector
+  if layer_name == "rec.weight_ih_l0" or layer_name == "rec.weight_hh_l0" or layer_name == "lin.weight":
+    var_declaration = "std::vector<std::vector<float>> " + layer_name.replace(".", "_") + " = "
+  else: 
+    var_declaration = "std::vector<float> " + layer_name.replace(".", "_") + " = "
   line += var_declaration
 
   line += "{"
@@ -88,10 +87,18 @@ if __name__ == "__main__":
     header_data.append(item + " : " + str(data['model_data'][item]))
   header_data.append("*/\n")
 
-  # Read the state dict from Pytorch Json model and reorganize
-  # data into c header format
+  # Read the state dict from Pytorch Json model and reorganize data into c header format
+  # Sum the rec.bias layers, skip adding individually
   for layer_name in data['state_dict'].keys():
-    add_layer(layer_name, data['state_dict'][layer_name], header_data)
+    if layer_name.startswith("rec.bias_") == True:
+      continue
+    if layer_name == "rec.weight_ih_l0" or layer_name == "rec.weight_hh_l0":
+      add_layer(layer_name, np.array(data['state_dict'][layer_name]).T, header_data) # Transpose 2D arrays (Pytorch->Tensorflow/Keras)
+    else:
+      add_layer(layer_name, data['state_dict'][layer_name], header_data)
+
+  bias_sum = np.array(data['state_dict']['rec.bias_ih_l0']) + np.array(data['state_dict']['rec.bias_hh_l0'])
+  add_layer('lstm_bias_sum', bias_sum, header_data)
 
   # Write data to .h file
   new_filename = args.json_model.split(".json")[0] + '.h'
