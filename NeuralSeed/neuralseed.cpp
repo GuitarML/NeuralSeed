@@ -4,9 +4,10 @@
 #include <RTNeural/RTNeural.h>
 
 // Model Weights
+#include "all_model_data.h"
 //#include "lstm6_test.h"
 //#include "ts9_lstm7_is2_gainKnob.h"
-#include "prince_is3_lstm7.h"
+//#include "prince_is3_lstm7.h"
 
 using namespace daisy;
 using namespace daisysp;
@@ -17,6 +18,7 @@ DaisyPetal hw;
 Parameter inLevel, modelParam, modelParam2, outLevel, wetDryMix;
 bool      bypass;
 int       modelInSize;
+unsigned int       modelIndex;
 
 Led led1, led2;
 
@@ -41,10 +43,54 @@ RTNeural::ModelT<float, 3, 1,
 //  Each LSTM 7 parameterized model takes up 3008 bytes
 
 
-//void changeModel()
-//{
+void changeModel()
+{
+    if (modelIndex == model_collection.size() - 1) {
+        modelIndex = 0;
+    } else {
+        modelIndex += 1;
+    }
 
-//}
+    if (model_collection[modelIndex].rec_weight_ih_l0.size() == 2) {
+      auto& lstm = (model2).template get<0>();
+      auto& dense = (model2).template get<1>();
+      modelInSize = 2;
+      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      dense.setWeights(model_collection[modelIndex].lin_weight);
+      dense.setBias(model_collection[modelIndex].lin_bias.data());
+
+    } else if (model_collection[modelIndex].rec_weight_ih_l0.size() == 3) {
+      auto& lstm = (model3).template get<0>();
+      auto& dense = (model3).template get<1>();
+      modelInSize = 3;
+      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      dense.setWeights(model_collection[modelIndex].lin_weight);
+      dense.setBias(model_collection[modelIndex].lin_bias.data());
+
+    } else {
+      auto& lstm = (model).template get<0>();
+      auto& dense = (model).template get<1>();
+      modelInSize = 1;
+      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      dense.setWeights(model_collection[modelIndex].lin_weight);
+      dense.setBias(model_collection[modelIndex].lin_bias.data());
+    }
+
+    // Initialize Neural Net
+    if (modelInSize == 1) {
+        model.reset();
+    } else if (modelInSize == 2) {
+        model2.reset();
+    } else {
+        model3.reset();
+    }
+}
 
 // This runs at a fixed rate, to prepare audio samples
 static void AudioCallback(AudioHandle::InputBuffer  in,
@@ -59,7 +105,7 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
 
     float in_level = inLevel.Process();
     float model_param = modelParam.Process();
-	float model_param2 = modelParam2.Process();
+    float model_param2 = modelParam2.Process();
     float out_level = outLevel.Process(); 
     float wet_dry_mix = wetDryMix.Process();
 
@@ -75,10 +121,10 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
     }
 
     // Cycle available models
-    //if(hw.switches[Terrarium::FOOTSWITCH_2].RisingEdge())
-    //{  
-        
-    //}
+    if(hw.switches[Terrarium::FOOTSWITCH_2].RisingEdge())
+    {  
+        changeModel();
+    }
 
     for(size_t i = 0; i < size; i++)
     {
@@ -101,21 +147,21 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
             } else if (modelInSize == 3) {
                 input_arr[0] = input * in_level;
                 input_arr[1] = model_param;
-			    input_arr[2] = model_param2;
+		input_arr[2] = model_param2;
                 wet = model3.forward (input_arr) + input;  // Run Parameterized Model and add Skip Connection
-            } else {
 
-                input_arr[0] = input * in_level;     // Set input array with input level adjustment
-                wet = model.forward (input_arr) + input;    // Run Model and add Skip Connection
+            } else {
+                input_arr[0] = input * in_level;           // Set input array with input level adjustment
+                wet = model.forward (input_arr) + input;   // Run Model and add Skip Connection
             }
 
             wet = wet * wet_dry_mix  + input * (1 - wet_dry_mix);  // Set Wet/Dry Mix
 
-            out[0][i] = wet * out_level;                       // Set output level
+            out[0][i] = wet * out_level;                           // Set output level
         }
 
         // Copy left channel to right channel (see how well mono processing works then try stereo)
-	    // Not needed for Terrarium, mono only (left channel)
+	// Not needed for Terrarium, mono only (left channel)
         //for(size_t i = 0; i < size; i++)
         //{
         //    out[1][i] = out[0][i];
@@ -130,68 +176,35 @@ int main(void)
 
     hw.Init();
     samplerate = hw.AudioSampleRate();
+
+    setupWeights();
     //hw.SetAudioBlockSize(4);
 
     // Initialize your knobs here like so:
     // parameter.Init(hw.knob[Terrarium::KNOB_1], 0.0f, 1.0f, Parameter::LOGARITHMIC);
 
     inLevel.Init(hw.knob[Terrarium::KNOB_1], 0.0f, 3.0f, Parameter::LINEAR);
-	wetDryMix.Init(hw.knob[Terrarium::KNOB_2], 0.0f, 1.0f, Parameter::LINEAR);
+    wetDryMix.Init(hw.knob[Terrarium::KNOB_2], 0.0f, 1.0f, Parameter::LINEAR);
     outLevel.Init(hw.knob[Terrarium::KNOB_3], 0.0f, 1.0f, Parameter::LINEAR);
-	modelParam.Init(hw.knob[Terrarium::KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
-	modelParam2.Init(hw.knob[Terrarium::KNOB_5], 0.0f, 1.0f, Parameter::LINEAR);
-	//modelParam3.Init(hw.knob[Terrarium::KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
-
+    modelParam.Init(hw.knob[Terrarium::KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
+    modelParam2.Init(hw.knob[Terrarium::KNOB_5], 0.0f, 1.0f, Parameter::LINEAR);
+    //modelParam3.Init(hw.knob[Terrarium::KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
 
     // Set samplerate for your processing like so:
     // verb.Init(samplerate);
 
     // Initialize the correct model
-
-    if (rec_weight_ih_l0.size() == 2) {
-      auto& lstm = (model2).template get<0>();
-      auto& dense = (model2).template get<1>();
-      modelInSize = 2;
-      lstm.setWVals(rec_weight_ih_l0);
-      lstm.setUVals(rec_weight_hh_l0);
-      lstm.setBVals(lstm_bias_sum);
-      dense.setWeights(lin_weight);
-      dense.setBias(lin_bias.data());
-
-    } else if (rec_weight_ih_l0.size() == 3) {
-      auto& lstm = (model3).template get<0>();
-      auto& dense = (model3).template get<1>();
-      modelInSize = 3;
-      lstm.setWVals(rec_weight_ih_l0);
-      lstm.setUVals(rec_weight_hh_l0);
-      lstm.setBVals(lstm_bias_sum);
-      dense.setWeights(lin_weight);
-      dense.setBias(lin_bias.data());
-
-    } else {
-      auto& lstm = (model).template get<0>();
-      auto& dense = (model).template get<1>();
-      modelInSize = 1;
-      lstm.setWVals(rec_weight_ih_l0);
-      lstm.setUVals(rec_weight_hh_l0);
-      lstm.setBVals(lstm_bias_sum);
-      dense.setWeights(lin_weight);
-      dense.setBias(lin_bias.data());
-    }
-
-    // Initialize Neural Net
-    if (modelInSize == 1) {
-      model.reset();
-    } else if (modelInSize == 2) {
-        model2.reset();
-    } else {
-        model3.reset();
-    }
+    modelIndex = 0;
+    changeModel();
 
     // Init the LEDs and set activate bypass
     led1.Init(hw.seed.GetPin(Terrarium::LED_1),false);
     led1.Update();
     bypass = true;
+
+    // TODO: How to flash LED when cycling models?
+    //led2.Init(hw.seed.GetPin(Terrarium::LED_2),false);
+    //led2.Update();
 
     hw.StartAdc();
     hw.StartAudio(AudioCallback);
