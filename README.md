@@ -48,7 +48,7 @@ make program
 | FS 1 | Bypass/Active | Bypass / effect engaged |
 | FS 2 | Cycle Neural Model | Loads the next available Neural Model, starts at beginning after the last in the list (i.e. next pedal/amp) |
 | LED 1 | Bypass/Active Indicator |Illuminated when effect is set to Active |
-| LED 2 | N/A |  |
+| LED 2 | Brightness based on selected model parameterization (Off = Snapshot, Dim = 1 Knob, Bright = 2 Knobs) |  |
 | Audio In 1 | Audio input | Mono only for Terrarium |
 | Audio Out 1 | Mix Out | Mono only for Terrarium |
 
