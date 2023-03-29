@@ -12,8 +12,7 @@ from a microphone). This is due to limited processing power on the M7 microcontr
 float32 audio data, so this could be optimized for the M7 chip using quantized int16 data. 
 
 The compiled binary and model data fits into Flash Memory, which is limited to 128KB. The [RTNeural](https://github.com/jatinchowdhury18/RTNeural)
-engine is used for fast inferencing of the neural models with a very tiny footprint. The maximum number 
-of models is limited to about 14 due to these constraints. It is possible to add more models utilizing other data storage 
+engine is used for fast inferencing of the neural models with a very tiny footprint.  It is possible to add more models utilizing other data storage 
 areas on the Daisy Seed.
 
 Audio processing uses 48kHz, 24-bit, mono.
