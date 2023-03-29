@@ -45,6 +45,9 @@ RTNeural::ModelT<float, 3, 1,
 
 void changeModel()
 {
+    if (bypass) {
+       return;
+    }
     if (modelIndex == model_collection.size() - 1) {
         modelIndex = 0;
     } else {
@@ -60,6 +63,7 @@ void changeModel()
       lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
+      led2.Set(0.4f);
 
     } else if (model_collection[modelIndex].rec_weight_ih_l0.size() == 3) {
       auto& lstm = (model3).template get<0>();
@@ -70,6 +74,7 @@ void changeModel()
       lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
+      led2.Set(1.0f);
 
     } else {
       auto& lstm = (model).template get<0>();
@@ -80,6 +85,7 @@ void changeModel()
       lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
+      led2.Set(0.0f);
     }
 
     // Initialize Neural Net
@@ -138,16 +144,16 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
         }
         else
         {
-
             if (modelInSize == 2) {
                 input_arr[0] = input * in_level;
                 input_arr[1] = model_param;
                 wet = model2.forward (input_arr) + input;  // Run Parameterized Model and add Skip Connection
                 
+                
             } else if (modelInSize == 3) {
                 input_arr[0] = input * in_level;
                 input_arr[1] = model_param;
-		input_arr[2] = model_param2;
+		        input_arr[2] = model_param2;
                 wet = model3.forward (input_arr) + input;  // Run Parameterized Model and add Skip Connection
 
             } else {
@@ -194,13 +200,16 @@ int main(void)
     // verb.Init(samplerate);
 
     // Initialize the correct model
-    modelIndex = 0;
+    modelIndex = -1;
     changeModel();
 
     // Init the LEDs and set activate bypass
     led1.Init(hw.seed.GetPin(Terrarium::LED_1),false);
     led1.Update();
     bypass = true;
+
+    led2.Init(hw.seed.GetPin(Terrarium::LED_2),false);
+    led2.Update();
 
     // TODO: How to flash LED when cycling models?
     //led2.Init(hw.seed.GetPin(Terrarium::LED_2),false);
