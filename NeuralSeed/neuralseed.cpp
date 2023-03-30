@@ -250,7 +250,7 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
                 wet += sig;
             } 
 
-            out[0][i] = wet * out_level * 0.9;                           // Set output level
+            out[0][i] = wet * out_level;                           // Set output level
         }
 
         // Copy left channel to right channel (see how well mono processing works then try stereo)
