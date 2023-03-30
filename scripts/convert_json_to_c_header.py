@@ -28,9 +28,9 @@ def add_layer(layer_name, layer_data, header_data):
   line = ""
   # Use appropriate declaration for 1D or 2D vector
   if layer_name == "rec.weight_ih_l0" or layer_name == "rec.weight_hh_l0" or layer_name == "lin.weight":
-    var_declaration = "  Model." + layer_name.replace(".", "_")
+    var_declaration = "  Model." + layer_name.replace(".", "_") + " = "
   else: 
-    var_declaration = "  Model." + layer_name.replace(".", "_")
+    var_declaration = "  Model." + layer_name.replace(".", "_") + " = "
   line += var_declaration
 
   line += "{"

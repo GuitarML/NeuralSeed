@@ -12,7 +12,7 @@ using namespace terrarium;
 
 // Declare a local daisy_petal for hardware access
 DaisyPetal hw;
-Parameter inLevel, modelParam, modelParam2, outLevel, wetDryMix;
+Parameter inLevel, modelParam, modelParam2, modelParam3, outLevel, wetDryMix;
 bool      bypass;
 int       modelInSize;
 unsigned int       modelIndex;
@@ -77,12 +77,17 @@ RTNeural::ModelT<float, 2, 1,
       RTNeural::DenseT<float, 7, 1>> model2;
 	  
 RTNeural::ModelT<float, 3, 1,
-      RTNeural::LSTMLayerT<float, 3, 7>,
-      RTNeural::DenseT<float, 7, 1>> model3;
+      RTNeural::LSTMLayerT<float, 3, 6>,
+      RTNeural::DenseT<float, 6, 1>> model3;
+
+RTNeural::ModelT<float, 4, 1,
+      RTNeural::LSTMLayerT<float, 4, 6>,
+      RTNeural::DenseT<float, 6, 1>> model4;
 
 // Notes: With default settings, LSTM 8 is max size (7 to be safe)
 //        Parameterized LSTM 8 is too much (1 knob), 7 works
 //        Parameterized 2-knob at LSTM 7 and all 4 EQ's active is too much (3 EQs seem OK)
+//            Changed 2-knob model to LSTM 6 for stability
 
 void changeModel()
 {
@@ -104,12 +109,23 @@ void changeModel()
       lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
-      led2.Set(0.4f);
+      led2.Set(0.3f);
 
     } else if (model_collection[modelIndex].rec_weight_ih_l0.size() == 3) {
       auto& lstm = (model3).template get<0>();
       auto& dense = (model3).template get<1>();
       modelInSize = 3;
+      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      dense.setWeights(model_collection[modelIndex].lin_weight);
+      dense.setBias(model_collection[modelIndex].lin_bias.data());
+      led2.Set(0.65f);
+
+    } else if (model_collection[modelIndex].rec_weight_ih_l0.size() == 4) {
+      auto& lstm = (model4).template get<0>();
+      auto& dense = (model4).template get<1>();
+      modelInSize = 4;
       lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
       lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
       lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
@@ -134,8 +150,10 @@ void changeModel()
         model.reset();
     } else if (modelInSize == 2) {
         model2.reset();
-    } else {
+    } else if (modelInSize == 3) {
         model3.reset();
+    } else {
+        model4.reset();
     }
 }
 
@@ -153,10 +171,11 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
     float in_level = inLevel.Process();
     float model_param = modelParam.Process();
     float model_param2 = modelParam2.Process();
+    float model_param3 = modelParam3.Process();
     float out_level = outLevel.Process(); 
     float wet_dry_mix = wetDryMix.Process();
 
-    float input_arr[3] = { 0.0, 0.0, 0.0 };
+    float input_arr[4] = { 0.0, 0.0, 0.0, 0.0 };
 
     // (De-)Activate bypass and toggle LED when left footswitch is pressed
     if(hw.switches[Terrarium::FOOTSWITCH_1].RisingEdge())
@@ -195,12 +214,18 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
                 input_arr[1] = model_param;
                 wet = model2.forward (input_arr) + input;  // Run Parameterized Model and add Skip Connection
                 
-                
             } else if (modelInSize == 3) {
                 input_arr[0] = input * in_level;
                 input_arr[1] = model_param;
 		        input_arr[2] = model_param2;
                 wet = model3.forward (input_arr) + input;  // Run Parameterized Model and add Skip Connection
+
+            } else if (modelInSize == 4) {
+                input_arr[0] = input * in_level;
+                input_arr[1] = model_param;
+		        input_arr[2] = model_param2;
+                input_arr[3] = model_param3;
+                wet = model4.forward (input_arr) + input;  // Run Parameterized Model and add Skip Connection
 
             } else {
                 input_arr[0] = input * in_level;           // Set input array with input level adjustment
@@ -253,7 +278,7 @@ int main(void)
     outLevel.Init(hw.knob[Terrarium::KNOB_3], 0.0f, 1.0f, Parameter::LINEAR);
     modelParam.Init(hw.knob[Terrarium::KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
     modelParam2.Init(hw.knob[Terrarium::KNOB_5], 0.0f, 1.0f, Parameter::LINEAR);
-    //modelParam3.Init(hw.knob[Terrarium::KNOB_6], 0.0f, 1.0f, Parameter::LINEAR); // Placeholder
+    modelParam3.Init(hw.knob[Terrarium::KNOB_6], 0.0f, 1.0f, Parameter::LINEAR); 
 
     // Initialize the correct model
     modelIndex = -1;
