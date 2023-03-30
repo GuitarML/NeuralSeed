@@ -4,6 +4,8 @@ Neural Seed uses neural networks to emulate amps/pedals on the Daisy Seed hardwa
 pedal by [PedalPCB](https://www.pedalpcb.com/product/pcb351/). Models are trained on audio recordings from your amp or pedal, and can be uploaded to the Daisy Seed
 as firmware. Effective for Amps/PreAmps (direct out, no cab), Distortion/Overdrive/Boost pedals (non-time based, no Reverb/Delay/Flange/Phaser).
 
+Start training models for NeuralSeed the easy way using the [Colab Script](https://colab.research.google.com/github/GuitarML/Automated-GuitarAmpModelling/blob/ns-capture/ProteusCapture.ipynb)!
+
 ![app](https://github.com/GuitarML/NeuralSeed/blob/main/neuralseed.jpg)
 
 The Daisy Seed is a powerful ARM Cortex-M7 powered board intended for audio effects. The Terrarium pcb provides input and output buffers needed 
