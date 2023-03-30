@@ -87,7 +87,7 @@ RTNeural::ModelT<float, 4, 1,
 // Notes: With default settings, LSTM 8 is max size (7 to be safe)
 //        Parameterized LSTM 8 is too much (1 knob), 7 works
 //        Parameterized 2-knob at LSTM 7 and all 4 EQ's active is too much (3 EQs seem OK)
-//            Changed 2-knob model to LSTM 6 for stability
+//            Changed 2-knob/3-knob model to LSTM 6 for stability
 
 void changeModel()
 {
