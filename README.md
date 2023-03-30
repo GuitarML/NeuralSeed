@@ -62,7 +62,7 @@ make program
 
 ## Training your own Models (Amp/Pedal Capture)
 
-You can train models for Neural Seed using the GuitarML fork of [Automated-GuitarAmpModelling](https://github.com/GuitarML/Automated-GuitarAmpModelling) code.
+You can train models for Neural Seed using the GuitarML fork (ns-capture branch) of [Automated-GuitarAmpModelling](https://github.com/GuitarML/Automated-GuitarAmpModelling/tree/ns-capture) code.
 Run "scripts/convert_json_to_c_header.py" on the resulting JSON model to generate a .h file, which you can copy and paste the weights into the "all_model_data.h" header before
 compiling "neuralseed.bin". Only LSTM size 7 models (snapshot, 1-param, or 2-param) models are currently compatible. Train models using 48kHz to match Daisy Seed processing 
-(note that this is different from most other GuitarML plugins). A 48kHz input wav file based on the Proteus input wav is available [here]().
+(note that this is different from most other GuitarML plugins). A 48kHz input wav file based on the Proteus input wav is available [here](https://github.com/GuitarML/Automated-GuitarAmpModelling/blob/ns-capture/Data/Proteus_Capture_48k.wav).
