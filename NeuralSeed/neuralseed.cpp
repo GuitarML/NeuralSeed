@@ -5,9 +5,6 @@
 
 // Model Weights
 #include "all_model_data.h"
-//#include "lstm6_test.h"
-//#include "ts9_lstm7_is2_gainKnob.h"
-//#include "prince_is3_lstm7.h"
 
 using namespace daisy;
 using namespace daisysp;
@@ -22,9 +19,54 @@ unsigned int       modelIndex;
 
 Led led1, led2;
 
+// Each EQ will be turned on/off independently
+bool       eqOn[4];
+int        freqs[4];
+
+
+struct Filter
+{
+    Svf   filt;
+    float amp;
+
+    void Init(float samplerate, float freq)
+    {
+        filt.Init(samplerate);
+        filt.SetRes(0.6);
+        filt.SetDrive(0.000);
+        filt.SetFreq(freq);
+        amp = .5f;
+    }
+
+    float Process(float in)
+    {
+        filt.Process(in);
+        return filt.Band() * amp;
+    }
+};
+
+Filter filters[4];
+
+void InitFreqs()
+{
+    freqs[0] = 120;
+    freqs[1] = 400;
+    freqs[2] = 800;
+    freqs[3] = 1600;
+}
+
+void InitFilters(float samplerate)
+{
+    for(int i = 0; i < 4; i++)
+    {
+        filters[i].Init(samplerate, freqs[i]);
+    }
+}
+
+
 RTNeural::ModelT<float, 1, 1,
-    RTNeural::LSTMLayerT<float, 1, 6>,
-    RTNeural::DenseT<float, 6, 1>> model;
+    RTNeural::LSTMLayerT<float, 1, 7>,
+    RTNeural::DenseT<float, 7, 1>> model;
 
 //RTNeural::ModelT<float, 1, 1,
 //    RTNeural::GRULayerT<float, 1, 8>,
@@ -40,8 +82,7 @@ RTNeural::ModelT<float, 3, 1,
 
 // Notes: With default settings, LSTM 8 is max size (7 to be safe)
 //        Parameterized LSTM 8 is too much (1 knob), 7 works
-//  Each LSTM 7 parameterized model takes up 3008 bytes
-
+//        Parameterized 2-knob at LSTM 7 and all 4 EQ's active is too much (3 EQs seem OK)
 
 void changeModel()
 {
@@ -115,8 +156,6 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
     float out_level = outLevel.Process(); 
     float wet_dry_mix = wetDryMix.Process();
 
-    //float input_arr1[1] = { 0.0 };
-    //float input_arr2[2] = { 0.0, 0.0 };
     float input_arr[3] = { 0.0, 0.0, 0.0 };
 
     // (De-)Activate bypass and toggle LED when left footswitch is pressed
@@ -131,6 +170,13 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
     {  
         changeModel();
     }
+
+    // EQ Switches
+    //     - The .Pressed() function below counts an 'ON' switch as pressed.
+    //     - Each EQ boost is controlled by it's own switch
+    int switches[4] = {Terrarium::SWITCH_1, Terrarium::SWITCH_2, Terrarium::SWITCH_3, Terrarium::SWITCH_4}; // Can this be moved elsewhere?
+    for(int i=0; i<4; i++)
+        eqOn[i] = hw.switches[switches[i]].Pressed();
 
     for(size_t i = 0; i < size; i++)
     {
@@ -163,11 +209,27 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
 
             wet = wet * wet_dry_mix  + input * (1 - wet_dry_mix);  // Set Wet/Dry Mix
 
+            // Process EQ (Note: Currently after wet/dry mix, should EQ come before?)
+            float sig = 0.f;
+            bool noEQ = true;
+            for(int j = 0; j < 4; j++)
+            {
+                if (eqOn[j]) {
+                    sig += filters[j].Process(wet);
+                    noEQ = false;
+                }
+            }
+            //sig *= .9;  // EQ level adjust if needed
+
+            if(!noEQ) {
+                wet += sig;
+            } 
+
             out[0][i] = wet * out_level;                           // Set output level
         }
 
         // Copy left channel to right channel (see how well mono processing works then try stereo)
-	// Not needed for Terrarium, mono only (left channel)
+	    // Not needed for Terrarium, mono only (left channel)
         //for(size_t i = 0; i < size; i++)
         //{
         //    out[1][i] = out[0][i];
@@ -186,22 +248,20 @@ int main(void)
     setupWeights();
     //hw.SetAudioBlockSize(4);
 
-    // Initialize your knobs here like so:
-    // parameter.Init(hw.knob[Terrarium::KNOB_1], 0.0f, 1.0f, Parameter::LOGARITHMIC);
-
     inLevel.Init(hw.knob[Terrarium::KNOB_1], 0.0f, 3.0f, Parameter::LINEAR);
     wetDryMix.Init(hw.knob[Terrarium::KNOB_2], 0.0f, 1.0f, Parameter::LINEAR);
     outLevel.Init(hw.knob[Terrarium::KNOB_3], 0.0f, 1.0f, Parameter::LINEAR);
     modelParam.Init(hw.knob[Terrarium::KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
     modelParam2.Init(hw.knob[Terrarium::KNOB_5], 0.0f, 1.0f, Parameter::LINEAR);
-    //modelParam3.Init(hw.knob[Terrarium::KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
-
-    // Set samplerate for your processing like so:
-    // verb.Init(samplerate);
+    //modelParam3.Init(hw.knob[Terrarium::KNOB_6], 0.0f, 1.0f, Parameter::LINEAR); // Placeholder
 
     // Initialize the correct model
     modelIndex = -1;
     changeModel();
+
+
+    InitFreqs();
+    InitFilters(samplerate);
 
     // Init the LEDs and set activate bypass
     led1.Init(hw.seed.GetPin(Terrarium::LED_1),false);
@@ -210,10 +270,6 @@ int main(void)
 
     led2.Init(hw.seed.GetPin(Terrarium::LED_2),false);
     led2.Update();
-
-    // TODO: How to flash LED when cycling models?
-    //led2.Init(hw.seed.GetPin(Terrarium::LED_2),false);
-    //led2.Update();
 
     hw.StartAdc();
     hw.StartAudio(AudioCallback);
