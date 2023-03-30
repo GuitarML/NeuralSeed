@@ -20,7 +20,9 @@ In comparison to other GuitarML plugins, Neural Seed is very minimal, running on
 [Proteus](https://github.com/GuitarML/Proteus) uses LSTM size 40). Using this size model, may not be able to accurately capture certain devices, especially
 high gain amps, but should work decently well for distortion/overdrive pedals and low - medium gain amps (direct out, not
 from a microphone). This is due to limited processing power on the M7 microcontroller. The current code processes on
-float32 audio data, so this could be optimized for the M7 chip using quantized int16 data. 
+float32 audio data, so this could be optimized for the M7 chip using quantized int16 data. The initial release includes 10 built in models,
+and there is room to add more, however the lack of a display means it's up to you to keep track of what model you're on! The Daisy Seed
+supports the addition of a display so this could be a future modification, as well as an encoder knob to switch models.
 
 The compiled binary and model data fits into Flash Memory, which is limited to 128KB. The [RTNeural](https://github.com/jatinchowdhury18/RTNeural)
 engine is used for fast inferencing of the neural models with a very tiny footprint.  It is possible to add more models utilizing other data storage 
