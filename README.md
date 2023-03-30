@@ -42,8 +42,8 @@ make program
 | Ctrl 3 | Volume | Sets the output volume of the pedal |
 | Ctrl 4 | Neural Param 1 | Adjusts the first model parameter, such as gain/tone (only applies to conditioned models) |
 | Ctrl 5 | Neural Param 2 | Adjusts the second model parameter, such as gain/tone (only applies to conditioned models)  |
-| Ctrl 6 | N/A |  |
-| SW 1 - 4 | N/A |  |
+| Ctrl 6 | N/A | Reserved for future 3-Parameter models |
+| SW 1 - 4 | 4Band EQ Boost | Bass, Low Mid, High Mid, Treble Boost (Band Pass) |
 | FS 1 | Bypass/Active | Bypass / effect engaged |
 | FS 2 | Cycle Neural Model | Loads the next available Neural Model, starts at beginning after the last in the list (i.e. next pedal/amp) |
 | LED 1 | Bypass/Active Indicator |Illuminated when effect is set to Active |
