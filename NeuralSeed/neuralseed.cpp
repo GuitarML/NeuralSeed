@@ -250,7 +250,7 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
                 wet += sig;
             } 
 
-            out[0][i] = wet * out_level;                           // Set output level
+            out[0][i] = wet * out_level * 0.2;                           // Set output level
         }
 
         // Copy left channel to right channel (see how well mono processing works then try stereo)
@@ -275,7 +275,7 @@ int main(void)
 
     inLevel.Init(hw.knob[Terrarium::KNOB_1], 0.0f, 3.0f, Parameter::LINEAR);
     wetDryMix.Init(hw.knob[Terrarium::KNOB_2], 0.0f, 1.0f, Parameter::LINEAR);
-    outLevel.Init(hw.knob[Terrarium::KNOB_3], 0.0f, 1.0f, Parameter::LINEAR);
+    outLevel.Init(hw.knob[Terrarium::KNOB_3], 0.0f, 1.0f, Parameter::LINEAR); 
     modelParam.Init(hw.knob[Terrarium::KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
     modelParam2.Init(hw.knob[Terrarium::KNOB_5], 0.0f, 1.0f, Parameter::LINEAR);
     modelParam3.Init(hw.knob[Terrarium::KNOB_6], 0.0f, 1.0f, Parameter::LINEAR); 
