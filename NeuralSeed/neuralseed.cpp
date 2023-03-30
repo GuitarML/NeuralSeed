@@ -232,7 +232,7 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
                 wet = model.forward (input_arr) + input;   // Run Model and add Skip Connection
             }
 
-            wet = wet * wet_dry_mix  + input * (1 - wet_dry_mix);  // Set Wet/Dry Mix
+            wet = wet * wet_dry_mix * 0.2 + input * (1 - wet_dry_mix);  // Set Wet/Dry Mix (and reduce model output)
 
             // Process EQ (Note: Currently after wet/dry mix, should EQ come before?)
             float sig = 0.f;
@@ -250,7 +250,7 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
                 wet += sig;
             } 
 
-            out[0][i] = wet * out_level * 0.2;                           // Set output level
+            out[0][i] = wet * out_level * 0.9;                           // Set output level
         }
 
         // Copy left channel to right channel (see how well mono processing works then try stereo)
