@@ -1,10 +1,14 @@
 # NeuralSeed
 
-Neural Seed uses neural networks to emulate amps/pedals on the Daisy Seed hardware by [Electro-Smith](https://www.electro-smith.com/), specifically the Terrarium
+Neural Seed uses neural networks to emulate amps/pedals on the Daisy Seed hardware by [Electro-Smith](https://www.electro-smith.com/), and the Terrarium
 pedal by [PedalPCB](https://www.pedalpcb.com/product/pcb351/). Models are trained on audio recordings from your amp or pedal, and can be uploaded to the Daisy Seed
 as firmware. Effective for Amps/PreAmps (direct out, no cab), Distortion/Overdrive/Boost pedals (non-time based, no Reverb/Delay/Flange/Phaser).
 
 ![app](https://github.com/GuitarML/NeuralSeed/blob/main/neuralseed.jpg)
+
+The Daisy Seed is a powerful ARM Cortex-M7 powered board intended for audio effects. The Terrarium pcb provides input and output buffers needed 
+for a digital guitar effect pedal. NeuralSeed is the software developed by GuitarML to run on this hardware. Total material cost was less than $100
+to build a fully capable digital guitar multi-effect.
 
 ## Technical Info
 In comparison to other GuitarML plugins, Neural Seed is very minimal, running only a LSTM size 7 (by comparison
