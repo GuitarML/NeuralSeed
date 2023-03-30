@@ -28,9 +28,9 @@ def add_layer(layer_name, layer_data, header_data):
   line = ""
   # Use appropriate declaration for 1D or 2D vector
   if layer_name == "rec.weight_ih_l0" or layer_name == "rec.weight_hh_l0" or layer_name == "lin.weight":
-    var_declaration = "std::vector<std::vector<float>> " + layer_name.replace(".", "_") + " = "
+    var_declaration = "  Model." + layer_name.replace(".", "_")
   else: 
-    var_declaration = "std::vector<float> " + layer_name.replace(".", "_") + " = "
+    var_declaration = "  Model." + layer_name.replace(".", "_")
   line += var_declaration
 
   line += "{"
@@ -81,6 +81,8 @@ if __name__ == "__main__":
   data = json.load(f)
 
   header_data = []
+  header_data.append("//========================================================================")
+  header_data.append("//" + args.json_model.split(".json")[0])
   # Read Model Data from Pytorch Json model to include in .h as comment
   header_data.append("/*")
   for item in data['model_data'].keys():
