@@ -74,25 +74,25 @@ void InitFilters(float samplerate)
 // 1 input for audio, up to 3 inputs for parameterized controls, such
 // as Gain/Drive or Tone.
 
-RTNeural::ModelT<float, 1, 1,
-    RTNeural::LSTMLayerT<float, 1, 7>,
-    RTNeural::DenseT<float, 7, 1>> model;
-
 //RTNeural::ModelT<float, 1, 1,
-//    RTNeural::GRULayerT<float, 1, 8>,
-//    RTNeural::DenseT<float, 8, 1>> model;
+//    RTNeural::LSTMLayerT<float, 1, 7>,
+//    RTNeural::DenseT<float, 7, 1>> model;
+
+RTNeural::ModelT<float, 1, 1,
+    RTNeural::GRULayerT<float, 1, 10>,
+    RTNeural::DenseT<float, 10, 1>> model;
 
 RTNeural::ModelT<float, 2, 1,
-      RTNeural::LSTMLayerT<float, 2, 7>,
-      RTNeural::DenseT<float, 7, 1>> model2;
+      RTNeural::GRULayerT<float, 2, 10>,
+      RTNeural::DenseT<float, 10, 1>> model2;
 	  
 RTNeural::ModelT<float, 3, 1,
-      RTNeural::LSTMLayerT<float, 3, 6>,
-      RTNeural::DenseT<float, 6, 1>> model3;
+      RTNeural::GRULayerT<float, 3, 8>,
+      RTNeural::DenseT<float, 8, 1>> model3;
 
 RTNeural::ModelT<float, 4, 1,
-      RTNeural::LSTMLayerT<float, 4, 6>,
-      RTNeural::DenseT<float, 6, 1>> model4;
+      RTNeural::GRULayerT<float, 4, 8>,
+      RTNeural::DenseT<float, 8, 1>> model4;
 
 // Notes: With default settings, LSTM 8 is max size currently able to run on Daisy Seed
 //         (chose 7 to be safe and allow room for other effects)
@@ -114,45 +114,45 @@ void changeModel()
     }
 
     if (model_collection[modelIndex].rec_weight_ih_l0.size() == 2) {
-      auto& lstm = (model2).template get<0>();
+      auto& gru = (model2).template get<0>();
       auto& dense = (model2).template get<1>();
       modelInSize = 2;
-      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
-      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
-      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      gru.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      gru.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      gru.setBVals(model_collection[modelIndex].rec_bias);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
       led2.Set(0.3f);
 
     } else if (model_collection[modelIndex].rec_weight_ih_l0.size() == 3) {
-      auto& lstm = (model3).template get<0>();
+      auto& gru = (model3).template get<0>();
       auto& dense = (model3).template get<1>();
       modelInSize = 3;
-      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
-      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
-      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      gru.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      gru.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      gru.setBVals(model_collection[modelIndex].rec_bias);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
       led2.Set(0.65f);
 
     } else if (model_collection[modelIndex].rec_weight_ih_l0.size() == 4) {
-      auto& lstm = (model4).template get<0>();
+      auto& gru = (model4).template get<0>();
       auto& dense = (model4).template get<1>();
       modelInSize = 4;
-      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
-      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
-      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      gru.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      gru.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      gru.setBVals(model_collection[modelIndex].rec_bias);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
       led2.Set(1.0f);
 
     } else {
-      auto& lstm = (model).template get<0>();
+      auto& gru = (model).template get<0>();
       auto& dense = (model).template get<1>();
       modelInSize = 1;
-      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
-      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
-      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      gru.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      gru.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      gru.setBVals(model_collection[modelIndex].rec_bias);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
       led2.Set(0.0f);
@@ -233,13 +233,13 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
             } else if (modelInSize == 3) {
                 input_arr[0] = input * in_level;
                 input_arr[1] = model_param;
-		input_arr[2] = model_param2;
+		        input_arr[2] = model_param2;
                 wet = model3.forward (input_arr) + input;  // Run Parameterized Model and add Skip Connection
 
             } else if (modelInSize == 4) {
                 input_arr[0] = input * in_level;
                 input_arr[1] = model_param;
-		input_arr[2] = model_param2;
+		        input_arr[2] = model_param2;
                 input_arr[3] = model_param3;
                 wet = model4.forward (input_arr) + input;  // Run Parameterized Model and add Skip Connection
 
