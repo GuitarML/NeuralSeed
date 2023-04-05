@@ -33,10 +33,12 @@ Utilizing only the 128KB Flash memory, NeuralSeed can hold around 15 different m
 and there is room to add more, however the lack of a display means it's up to you to keep track of what model you're on!
 
 ## Getting started
-Build the daisy libraries with:
+Build the daisy libraries and NeuralSeed with (after installing the Daisy Toolchain):
 ```
 make -C DaisySP
 make -C libDaisy
+cd NeuralSeed
+make
 ```
 
 Then flash your terrarium with the following commands (or use the [Electrosmith Web Programmer](https://electro-smith.github.io/Programmer/))
