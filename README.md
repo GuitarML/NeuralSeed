@@ -77,7 +77,7 @@ Keep in mind that capture with such small models is hit or miss, and may take so
 or may contain harmonic noise. Ensure to start with volume low when testing a new model on the pedal.
 
 ## Adding your model to NeuralSeed
-To add your models to a custome build of Neural Seed, run the converter script on your json model. <br>
+To add your models to a custom build of Neural Seed, run the converter script on your json model. <br>
 ```python convert_json_to_c_header_gru.py <model_file.json>```<br>
 Then copy and paste the information from the generated c-header into the ```all_model_data.h``` file 
 before compiling. Ensure to modify the "Model" weights to a unique identifier, and add to the initialization list a the top and the "model_collection" vector at the bottom.
