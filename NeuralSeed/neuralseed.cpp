@@ -240,7 +240,7 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
                 wet = model.forward (input_arr) + input;   // Run Model and add Skip Connection
             }
 
-            wet *= 0.8; // Level adjustment, models are too loud
+            wet *= 0.6; // Level adjustment, models are too loud
 
             // wet = wet * wet_dry_mix * 0.2 + input * (1 - wet_dry_mix);  // Set Wet/Dry Mix (and reduce model output)
 
