@@ -1,0 +1,258 @@
+{
+	"Number of Parameters":3,
+	"Data Sets":[
+{
+	"Parameters": [ 0.0, 0.0, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g0_t0_p0.wav"
+},
+{
+	"Parameters": [ 0.0, 0.0, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g0_t0_p5.wav"
+},
+{
+	"Parameters": [ 0.0, 0.0, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g0_t0_p10.wav"
+},
+
+
+{
+	"Parameters": [ 0.0, 0.5, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g0_t5_p0.wav"
+},
+{
+	"Parameters": [ 0.0, 0.5, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g0_t5_p5.wav"
+},
+{
+	"Parameters": [ 0.0, 0.5, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g0_t5_p10.wav"
+},
+
+
+{
+	"Parameters": [ 0.0, 1.0, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g0_t10_p0.wav"
+},
+{
+	"Parameters": [ 0.0, 1.0, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g0_t10_p5.wav"
+},
+{
+	"Parameters": [ 0.0, 1.0, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g0_t10_p10.wav"
+},
+
+
+{
+	"Parameters": [ 0.25, 0.0, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g25_t0_p0.wav"
+},
+{
+	"Parameters": [ 0.25, 0.0, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g25_t0_p5.wav"
+},
+{
+	"Parameters": [ 0.25, 0.0, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g25_t0_p10.wav"
+},
+
+
+{
+	"Parameters": [ 0.25, 0.5, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g25_t5_p0.wav"
+},
+{
+	"Parameters": [ 0.25, 0.5, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g25_t5_p5.wav"
+},
+{
+	"Parameters": [ 0.25, 0.5, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g25_t5_p10.wav"
+},
+
+
+{
+	"Parameters": [ 0.25, 1.0, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g25_t10_p0.wav"
+},
+{
+	"Parameters": [ 0.25, 1.0, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g25_t10_p5.wav"
+},
+{
+	"Parameters": [ 0.25, 1.0, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g25_t10_p10.wav"
+},
+
+
+{
+	"Parameters": [ 0.5, 0.0, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g5_t0_p0.wav"
+},
+{
+	"Parameters": [ 0.5, 0.0, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g5_t0_p5.wav"
+},
+{
+	"Parameters": [ 0.5, 0.0, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g5_t0_p10.wav"
+},
+
+
+{
+	"Parameters": [ 0.5, 0.5, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g5_t5_p0.wav"
+},
+{
+	"Parameters": [ 0.5, 0.5, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g5_t5_p5.wav"
+},
+{
+	"Parameters": [ 0.5, 0.5, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g5_t5_p10.wav"
+},
+
+
+{
+	"Parameters": [ 0.5, 1.0, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g5_t10_p0.wav"
+},
+{
+	"Parameters": [ 0.5, 1.0, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g5_t10_p5.wav"
+},
+{
+	"Parameters": [ 0.5, 1.0, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g5_t10_p10.wav"
+},
+
+{
+	"Parameters": [ 0.75, 0.0, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g75_t0_p0.wav"
+},
+{
+	"Parameters": [ 0.75, 0.0, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g75_t0_p5.wav"
+},
+{
+	"Parameters": [ 0.75, 0.0, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g75_t0_p10.wav"
+},
+
+
+{
+	"Parameters": [ 0.75, 0.5, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g75_t5_p0.wav"
+},
+{
+	"Parameters": [ 0.75, 0.5, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g75_t5_p5.wav"
+},
+{
+	"Parameters": [ 0.75, 0.5, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g75_t5_p10.wav"
+},
+
+
+{
+	"Parameters": [ 0.75, 1.0, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g75_t10_p0.wav"
+},
+{
+	"Parameters": [ 0.75, 1.0, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g75_t10_p5.wav"
+},
+{
+	"Parameters": [ 0.75, 1.0, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g75_t10_p10.wav"
+},
+
+
+{
+	"Parameters": [ 1.0, 0.0, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g10_t0_p0.wav"
+},
+{
+	"Parameters": [ 1.0, 0.0, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g10_t0_p5.wav"
+},
+{
+	"Parameters": [ 1.0, 0.0, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g10_t0_p10.wav"
+},
+
+
+{
+	"Parameters": [ 1.0, 0.5, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g10_t5_p0.wav"
+},
+{
+	"Parameters": [ 1.0, 0.5, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g10_t5_p5.wav"
+},
+{
+	"Parameters": [ 1.0, 0.5, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g10_t5_p10.wav"
+},
+
+
+{
+	"Parameters": [ 1.0, 1.0, 0.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g10_t10_p0.wav"
+},
+{
+	"Parameters": [ 1.0, 1.0, 0.5 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g10_t10_p5.wav"
+},
+{
+	"Parameters": [ 1.0, 1.0, 1.0 ],
+	"TrainingClean": "Data/Proteus_Capture_48k.wav",
+	"TrainingTarget": "../g10_t10_p10.wav"
+}
+
+]
+}

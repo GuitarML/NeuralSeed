@@ -25,7 +25,6 @@ static CrossFade cfade; // For blending the wet/dry signals while maintaining co
 bool       eqOn[4];
 int        freqs[4];
 
-
 // Our bandpass filter for each EQ boost switch
 struct Filter
 {
@@ -70,36 +69,29 @@ void InitFilters(float samplerate)
 
 
 // These are each of the Neural Model options.
-// LSTM (Long-Short Term Memory) networks with input sizes ranging 1 - 4.
+// GRU (Gated Recurrent Unit) networks with input sizes ranging 1 - 4.
 // 1 input for audio, up to 3 inputs for parameterized controls, such
 // as Gain/Drive or Tone.
 
 RTNeural::ModelT<float, 1, 1,
-    RTNeural::LSTMLayerT<float, 1, 7>,
-    RTNeural::DenseT<float, 7, 1>> model;
-
-//RTNeural::ModelT<float, 1, 1,
-//    RTNeural::GRULayerT<float, 1, 8>,
-//    RTNeural::DenseT<float, 8, 1>> model;
+    RTNeural::GRULayerT<float, 1, 10>,
+    RTNeural::DenseT<float, 10, 1>> model;
 
 RTNeural::ModelT<float, 2, 1,
-      RTNeural::LSTMLayerT<float, 2, 7>,
-      RTNeural::DenseT<float, 7, 1>> model2;
+      RTNeural::GRULayerT<float, 2, 10>,
+      RTNeural::DenseT<float, 10, 1>> model2;
 	  
 RTNeural::ModelT<float, 3, 1,
-      RTNeural::LSTMLayerT<float, 3, 6>,
-      RTNeural::DenseT<float, 6, 1>> model3;
+      RTNeural::GRULayerT<float, 3, 8>,
+      RTNeural::DenseT<float, 8, 1>> model3;
 
 RTNeural::ModelT<float, 4, 1,
-      RTNeural::LSTMLayerT<float, 4, 6>,
-      RTNeural::DenseT<float, 6, 1>> model4;
+      RTNeural::GRULayerT<float, 4, 8>,
+      RTNeural::DenseT<float, 8, 1>> model4;
 
-// Notes: With default settings, LSTM 8 is max size currently able to run on Daisy Seed
-//         (chose 7 to be safe and allow room for other effects)
-//        - Parameterized LSTM 8 is too much (1 knob), 7 works
-//        - Parameterized 2-knob at LSTM 7 and all 4 EQ's active is too much (3 EQs seem OK)
-//        - Changed 2-knob/3-knob model to LSTM 6 for stability
-
+// Notes: With default settings, GRU 10 is max size currently able to run on Daisy Seed
+//        - Parameterized 1-knob GRU 10 is max
+//        - Parameterized 2-knob/3-knob at GRU 8 is max
 
 // Loads a new model using the correct template and resets the right LED brightness
 void changeModel()
@@ -114,45 +106,45 @@ void changeModel()
     }
 
     if (model_collection[modelIndex].rec_weight_ih_l0.size() == 2) {
-      auto& lstm = (model2).template get<0>();
+      auto& gru = (model2).template get<0>();
       auto& dense = (model2).template get<1>();
       modelInSize = 2;
-      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
-      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
-      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      gru.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      gru.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      gru.setBVals(model_collection[modelIndex].rec_bias);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
       led2.Set(0.3f);
 
     } else if (model_collection[modelIndex].rec_weight_ih_l0.size() == 3) {
-      auto& lstm = (model3).template get<0>();
+      auto& gru = (model3).template get<0>();
       auto& dense = (model3).template get<1>();
       modelInSize = 3;
-      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
-      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
-      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      gru.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      gru.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      gru.setBVals(model_collection[modelIndex].rec_bias);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
       led2.Set(0.65f);
 
     } else if (model_collection[modelIndex].rec_weight_ih_l0.size() == 4) {
-      auto& lstm = (model4).template get<0>();
+      auto& gru = (model4).template get<0>();
       auto& dense = (model4).template get<1>();
       modelInSize = 4;
-      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
-      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
-      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      gru.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      gru.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      gru.setBVals(model_collection[modelIndex].rec_bias);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
       led2.Set(1.0f);
 
     } else {
-      auto& lstm = (model).template get<0>();
+      auto& gru = (model).template get<0>();
       auto& dense = (model).template get<1>();
       modelInSize = 1;
-      lstm.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
-      lstm.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
-      lstm.setBVals(model_collection[modelIndex].lstm_bias_sum);
+      gru.setWVals(model_collection[modelIndex].rec_weight_ih_l0);
+      gru.setUVals(model_collection[modelIndex].rec_weight_hh_l0);
+      gru.setBVals(model_collection[modelIndex].rec_bias);
       dense.setWeights(model_collection[modelIndex].lin_weight);
       dense.setBias(model_collection[modelIndex].lin_bias.data());
       led2.Set(0.0f);
@@ -233,13 +225,13 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
             } else if (modelInSize == 3) {
                 input_arr[0] = input * in_level;
                 input_arr[1] = model_param;
-		input_arr[2] = model_param2;
+		        input_arr[2] = model_param2;
                 wet = model3.forward (input_arr) + input;  // Run Parameterized Model and add Skip Connection
 
             } else if (modelInSize == 4) {
                 input_arr[0] = input * in_level;
                 input_arr[1] = model_param;
-		input_arr[2] = model_param2;
+		        input_arr[2] = model_param2;
                 input_arr[3] = model_param3;
                 wet = model4.forward (input_arr) + input;  // Run Parameterized Model and add Skip Connection
 
@@ -248,7 +240,7 @@ static void AudioCallback(AudioHandle::InputBuffer  in,
                 wet = model.forward (input_arr) + input;   // Run Model and add Skip Connection
             }
 
-            wet *= 0.4; // Level adjustment, models are too loud
+            wet *= 0.6; // Level adjustment, models are too loud
 
             // wet = wet * wet_dry_mix * 0.2 + input * (1 - wet_dry_mix);  // Set Wet/Dry Mix (and reduce model output)
 

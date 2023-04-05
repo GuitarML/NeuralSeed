@@ -15,20 +15,22 @@ The Daisy Seed is a powerful ARM Cortex-M7 powered board intended for audio effe
 to the Daisy Seed for up to 6 potentiometer knobs, 4 switches, in/out jacks, and 9v power supply. NeuralSeed is the software developed by GuitarML to run on this hardware. 
 Total material cost was less than $100 to build a fully capable digital guitar multi-effect.
 
+For information on compiling NeuralSeed in the Daisy Ecosystem see the [Daisy Wiki](https://github.com/electro-smith/DaisyWiki/wiki).
+
 ## Technical Info
-In comparison to other GuitarML plugins, Neural Seed is very minimal, running only a LSTM size 7 (by comparison
+In comparison to other GuitarML plugins, Neural Seed is very minimal, running only a GRU size 10 (by comparison
 [Proteus](https://github.com/GuitarML/Proteus) uses LSTM size 40). Using this size model, may not be able to accurately capture certain devices, especially
-high gain amps, but should work decently well for distortion/overdrive pedals and low - medium gain amps (direct out, not
+high gain amps, but should work decently well for distortion/overdrive pedals and low gain amps (direct out, not
 from a microphone). This is due to limited processing power on the M7 microcontroller. The current code processes on
-float32 audio data, so this could be optimized for the M7 chip using quantized int16 data. The initial release includes 10 built in models,
-and there is room to add more, however the lack of a display means it's up to you to keep track of what model you're on! The Daisy Seed
+float32 audio data, so this could be optimized for the M7 chip using quantized int16 data. The Daisy Seed
 supports the addition of a display so this could be a future modification, as well as an encoder knob to switch models.
 
 The compiled binary and model data fits into Flash Memory, which is limited to 128KB. The [RTNeural](https://github.com/jatinchowdhury18/RTNeural)
 engine is used for fast inferencing of the neural models with a very tiny footprint.  It is possible to add more models utilizing other data storage 
 areas on the Daisy Seed.
 
-Audio processing uses 48kHz, 24-bit, mono.
+Utilizing only the 128KB Flash memory, NeuralSeed can hold around 15 different models. The initial release includes 11 built in models,
+and there is room to add more, however the lack of a display means it's up to you to keep track of what model you're on!
 
 ## Getting started
 Build the daisy libraries with:
@@ -68,5 +70,16 @@ make program
 
 You can train models for Neural Seed using the GuitarML fork (ns-capture branch) of [Automated-GuitarAmpModelling](https://github.com/GuitarML/Automated-GuitarAmpModelling/tree/ns-capture) code.
 Run "scripts/convert_json_to_c_header.py" on the resulting JSON model to generate a .h file, which you can copy and paste the weights into the "all_model_data.h" header before
-compiling "neuralseed.bin". Only LSTM size 7 models (snapshot, 1-param) or LSTM size 6 (2-param, 3-param) models are currently compatible. Train models using 48kHz to match Daisy Seed processing 
+compiling "neuralseed.bin". Only GRU size 10 models (snapshot, 1-param) or GRU size 8 (2-param, 3-param) models are currently compatible. Train models using 48kHz to match Daisy Seed processing 
 (note that this is different from most other GuitarML plugins). A 48kHz input wav file based on the Proteus input wav is available [here](https://github.com/GuitarML/Automated-GuitarAmpModelling/blob/ns-capture/Data/Proteus_Capture_48k.wav).
+
+Keep in mind that capture with such small models is hit or miss, and may take some massaging to get a proper capture, or may not be captured at all. Loss values over 0.08 probably won't sound good,
+or may contain harmonic noise. Ensure to start with volume low when testing a new model on the pedal.
+
+## Adding your model to NeuralSeed
+To add your models to a custom build of Neural Seed, run the converter script on your json model. <br>
+```python convert_json_to_c_header_gru.py <model_file.json>```<br>
+Then copy and paste the information from the generated c-header into the ```all_model_data.h``` file 
+before compiling. Ensure to modify the "Model" weights to a unique identifier, and add to the initialization list a the top and the "model_collection" vector at the bottom.
+
+Email either the .json or .h model file to smartguitarml@gmail.com and it may be included in the official repo.
