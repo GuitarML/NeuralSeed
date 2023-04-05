@@ -5,6 +5,8 @@ pedal by [PedalPCB](https://www.pedalpcb.com/product/pcb351/). Models are traine
 as firmware. NeuralSeed includes several built in amp/pedal models, as well as controls for input/output level, wet/dry mix, and up to 3 parameterized knobs
 for the selected neural model. Effective for Amps/PreAmps (direct out, no cab), Distortion/Overdrive/Boost pedals (non-time based, no Reverb/Delay/Flange/Phaser).
 
+View the Demo on [YouTube](https://youtu.be/c3zJRMWr_Ls)
+
 Download the neuralseed.bin for Daisy Seed from the [Releases](https://github.com/GuitarML/NeuralSeed/releases) page. See release notes for a list of built in amp/pedal models.
 
 Start training models for NeuralSeed the easy way using the [Colab Script](https://colab.research.google.com/github/GuitarML/Automated-GuitarAmpModelling/blob/ns-capture/ProteusCapture.ipynb)!
