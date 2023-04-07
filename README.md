@@ -7,6 +7,8 @@ for the selected neural model. Effective for Amps/PreAmps (direct out, no cab), 
 
 View the Demo on [YouTube](https://youtu.be/c3zJRMWr_Ls)
 
+Read the tech article published in [Towards Data Science](https://medium.com/p/ea9cdad2a29c)
+
 Download the neuralseed.bin for Daisy Seed from the [Releases](https://github.com/GuitarML/NeuralSeed/releases) page. See release notes for a list of built in amp/pedal models.
 
 Start training models for NeuralSeed the easy way using the [Colab Script](https://colab.research.google.com/github/GuitarML/Automated-GuitarAmpModelling/blob/ns-capture/ProteusCapture.ipynb)!
