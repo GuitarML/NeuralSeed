@@ -34,7 +34,8 @@ engine is used for fast inferencing of the neural models with a very tiny footpr
 areas on the Daisy Seed.
 
 Utilizing only the 128KB Flash memory, NeuralSeed can hold around 15 different models. The initial release includes 11 built in models,
-and there is room to add more, however the lack of a display means it's up to you to keep track of what model you're on!
+and there is room to add more, however the lack of a display means it's up to you to keep track of what model you're on! For live shows one 
+could choose a subset of their favorite models by editing the ```NeuralSeed/all_model_data.h``` file to make this more manageable.
 
 ## Getting started
 Build the daisy libraries and NeuralSeed with (after installing the Daisy Toolchain):
